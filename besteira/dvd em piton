@@ -1,0 +1,41 @@
+import pygame
+import sys
+import random
+
+pygame.init()
+
+w = 640
+h = 400
+tela = pygame.display.set_mode((w,h))
+pygame.display.set_caption("dvd")
+
+bg_cor = (0,0,0)
+circ_cor = (random.randrange(100,255),random.randrange(100,255),random.randrange(100,255))
+raio = 50
+
+pos_x=w/2
+pos_y=h/2
+vel=2
+dirx=1
+diry=1
+
+while True:
+    for e in pygame.event.get():
+        if e.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+    
+    pos_x += vel*dirx
+    pos_y += vel*diry
+    
+    if pos_x == raio or pos_x == w-raio or pos_y==raio or pos_y==h-raio:
+        circ_cor = (random.randrange(100,255),random.randrange(100,255),random.randrange(100,255))
+        dirx = 1 if pos_x==raio else -1 if pos_x==w-raio else dirx
+        diry = 1 if pos_y==raio else -1 if pos_y==h-raio else diry
+    
+    tela.fill(bg_cor)
+
+    pygame.draw.circle(tela,circ_cor,(pos_x,pos_y),raio)
+    pygame.display.update()
+    pygame.time.Clock().tick(60)
+        

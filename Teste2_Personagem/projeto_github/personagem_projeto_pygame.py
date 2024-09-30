@@ -2,7 +2,7 @@ import pygame, sys
 from pygame.locals import *
 
 # Tamanho total do mapa
-WINDOW_SIZE = (600, 400)
+WINDOW_SIZE = (1280, 720)
 
 # Tamanho da tela
 display = pygame.Surface((300, 200))
@@ -19,15 +19,19 @@ pygame.init()
 # Carregamento de imagens do cenário
 grass_img = pygame.image.load('grass.png')
 dirt_img = pygame.image.load('dirt.png')
+dirt_img = pygame.transform.scale(dirt_img, (16, 16))
 floor_img = pygame.image.load('floor.png')
 floor_img = pygame.transform.scale(floor_img, (16, 16))
 back_img = pygame.image.load('floorgrass.png')
 back_img = pygame.transform.scale(back_img, (600, 400))
 arvore_img = pygame.image.load('arvore.png')
 arvore_img = pygame.transform.scale(arvore_img, (16, 16))
+arvore2_img = pygame.image.load('arvore2.png')
+arvore2_img = pygame.transform.scale(arvore2_img, (16, 16))
 
 # Colisão Player
-player_rect = pygame.Rect(50, 50, 12, 24)  # Reduzir o tamanho do retângulo do player
+
+player_rect = pygame.Rect(50,50, 23, 23)  # Reduzir o tamanho do retângulo do player
 
 # Tamanho do bloco(bloco de 1x1px)
 TILE_SIZE = grass_img.get_width()
@@ -130,7 +134,7 @@ while True:
     
     # Ajuste: Cálculo da rolagem da câmera com base na posição do jogador
     true_scroll[0] += (player_rect.x - true_scroll[0] - 152) / 20
-    true_scroll[1] += (player_rect.y - true_scroll[1] - 106) / 20
+    true_scroll[1] += (player_rect.y - true_scroll[1] - 106) / 10
     scroll = true_scroll.copy()
     scroll[0] = int(scroll[0])
     scroll[1] = int(scroll[1])
@@ -149,8 +153,11 @@ while True:
                 display.blit(floor_img, (x * TILE_SIZE - scroll[0], y * TILE_SIZE - scroll[1]))
             if tile == '4':
                 display.blit(arvore_img, (x * TREE_WIDTH - scroll[0], y * TREE_HEIGHT - scroll[1]))
+            if tile == '5':
+                display.blit(arvore2_img, (x * TREE_WIDTH - scroll[0], y * TREE_HEIGHT - scroll[1]))
             if tile != '0' and tile != '3':
                 tile_rects.append(pygame.Rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE))
+                
             x += 1
         y += 1
 
@@ -184,7 +191,7 @@ while True:
     player_img_id = animation_database[player_action][player_frame]
     player_img = animation_frames[player_img_id]
     display.blit(pygame.transform.flip(player_img, player_flip, False), 
-                 (player_rect.x - scroll[0], player_rect.y - scroll[1]))
+                 (player_rect.x-7 - scroll[0], player_rect.y-7 - scroll[1]))
 
     # Eventos de input do jogador
     for event in pygame.event.get():

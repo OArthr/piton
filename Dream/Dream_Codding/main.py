@@ -131,7 +131,7 @@ player_rect.y = player_start_y
 true_scroll = [0, 0]
 
 while True:
-    display.fill((146, 244, 255))  # Cor de fundo do céu
+    display.fill((37,19,26))  # Cor de fundo do céu
     
     # Ajuste: Cálculo da rolagem da câmera com base na posição do jogador
     true_scroll[0] += (player_rect.x - true_scroll[0] - 152) / 20

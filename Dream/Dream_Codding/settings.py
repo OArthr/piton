@@ -17,7 +17,7 @@ TILE_SIZE = 16
 # }
 
 LAYERS = {
-	# 'water': 0,
+	'agua': 0,
 	'ground': 1,
 	# 'soil': 2,
 	# 'soil water': 3,

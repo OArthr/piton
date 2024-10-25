@@ -7,3 +7,7 @@ class Generic(pygame.sprite.Sprite):
         self.image = surf
         self.rect = self.image.get_rect(topleft=pos)
         self.z = z
+
+class Objetos(Generic):
+    def __init__(self, pos, surf, groups):
+        super().__init__(pos, surf, groups)

@@ -22,9 +22,9 @@ LAYERS = {
 	# 'soil': 2,
 	# 'soil water': 3,
 	# 'rain floor': 4,
-	# 'house bottom': 5,
+	'casa_chão': 2,
 	# 'ground plant': 6,
-	'main': 2,
+	'main': 3,
 	# 'house top': 8,
 	# 'fruit': 9,
 	# 'rain drops': 10

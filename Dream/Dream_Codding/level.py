@@ -11,6 +11,8 @@ class Level:
         #Pega a superficie
         self.display_surface = pygame.display.get_surface()    
         self.all_sprites = CameraGroup()
+        self.colisions_sprites = pygame.sprite.Group()
+
         self.setup()
 
     def setup(self):
@@ -32,12 +34,33 @@ class Level:
             for x, y, surf in tmx_data.get_layer_by_name(layer).tiles():
                 Generic((x * TILE_SIZE,y * TILE_SIZE), surf , self.all_sprites , LAYERS['agua'])
         
+        for layer in ['casa_chão']:
+            for x, y, surf in tmx_data.get_layer_by_name(layer).tiles():
+                Generic((x * TILE_SIZE,y * TILE_SIZE), surf , self.all_sprites , LAYERS['casa_chão'])
+        for layer in ['Cerca']:
+            for x, y, surf in tmx_data.get_layer_by_name(layer).tiles():
+                Generic((x * TILE_SIZE,y * TILE_SIZE), surf , [self.all_sprites, self.colisions_sprites] , LAYERS['main'])
+        for layer in ['Parede']:
+            for x, y, surf in tmx_data.get_layer_by_name(layer).tiles():
+                Generic((x * TILE_SIZE,y * TILE_SIZE), surf , self.all_sprites , LAYERS['main'])
+        for layer in ['porta']:
+            for x, y, surf in tmx_data.get_layer_by_name(layer).tiles():
+                Generic((x * TILE_SIZE,y * TILE_SIZE), surf , self.all_sprites , LAYERS['main'])
         #Obejtos
         for obj in tmx_data.get_layer_by_name('Objetos'):
-            Objetos((obj.x , obj.y), obj.image , self.all_sprites)
+            Objetos((obj.x , obj.y), obj.image , [self.all_sprites, self.colisions_sprites])
+
+        #Colisões
+        for x, y, surf in tmx_data.get_layer_by_name('Colisões').tiles():
+            Generic((x * TILE_SIZE,y * TILE_SIZE), pygame.Surface((TILE_SIZE, TILE_SIZE)) , self.colisions_sprites)
+
+        #Inicio
+        for obj in tmx_data.get_layer_by_name('Player'):
+            if obj.name == 'Inicio':
+                self.player = Player((obj.x , obj.y), self.all_sprites, self.colisions_sprites)
 
 
-        self.player = Player((0, 0), self.all_sprites)
+
         # Generic(
         #     pos = (0, 0), 
         #     surf = pygame.image.load('Dream/Dream_Codding/grafico/grafico/ground.png').convert_alpha(), 

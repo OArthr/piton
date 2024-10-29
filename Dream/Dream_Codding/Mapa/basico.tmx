@@ -170,7 +170,7 @@
   <object id="18" name="ovo" type="item" gid="156" x="131.333" y="171" width="8" height="7.33333"/>
   <object id="19" name="ovo" type="item" gid="156" x="68.6667" y="237" width="6.66667" height="7.33333"/>
  </objectgroup>
- <layer id="12" name="Colisões" width="30" height="20">
+ <layer id="12" name="Colisões" width="30" height="20" visible="0">
   <data encoding="csv">
 245,245,245,245,245,245,245,245,245,245,245,245,245,245,245,245,245,245,245,245,245,245,245,245,245,245,245,245,245,245,
 245,0,289,289,289,289,289,289,0,245,245,245,245,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,245,

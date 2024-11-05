@@ -17,7 +17,7 @@ class Level:
 
     def setup(self):
         #Mapa
-        tmx_data = load_pygame('Dream/Dream_Codding/Mapa/basico.tmx')
+        tmx_data = load_pygame('Dream_Codding/Mapa/basico.tmx')
 
         #pegando as tiles da camada
         '''#No loop basta colocar o nome da camada(do tiled) por layer(uma ou mais de uma)
@@ -78,13 +78,36 @@ class CameraGroup(pygame.sprite.Group):
         self.display_surface = pygame.display.get_surface()
         self.offset = pygame.math.Vector2()
 
+        self.zoom_scale = 1
+        self.inter_surf_size = pygame.display.get_surface().get_size()
+        self.inter_surf = pygame.Surface(self.inter_surf_size, pygame.SRCALPHA)
+        self.inter_surf_size_vect = pygame.math.Vector2(self.inter_surf_size)
+
+    
+    def zoom(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_q] and self.zoom_scale < 2:
+            self.zoom_scale += .01
+        if keys[pygame.K_e] and self.zoom_scale > .8:
+            self.zoom_scale -= .01
+
     def custom_draw(self, player):
         self.offset.x = player.rect.centerx - SCREEN_WIDTH / 2
         self.offset.y = player.rect.centery - SCREEN_HEIGHT / 2
+        
+        self.zoom()
+
+        self.inter_surf.fill('black')
+
             
         for layer in LAYERS.values():
             for sprite in sorted(self.sprites(), key = lambda sprite: sprite.rect.centery):
                 if sprite.z == layer:
                     offset_rect = sprite.rect.copy()
                     offset_rect.center -= self.offset
-                    self.display_surface.blit(sprite.image, offset_rect)
+                    self.inter_surf.blit(sprite.image, offset_rect)
+        
+        scaled_surf = pygame.transform.scale(self.inter_surf,self.inter_surf_size_vect * self.zoom_scale)
+        scaled_rect = scaled_surf.get_rect(center = (self.display_surface.get_size()[0]//2,self.display_surface.get_size()[1]//2))
+
+        self.display_surface.blit(scaled_surf,scaled_rect)

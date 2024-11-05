@@ -17,7 +17,7 @@ class Level:
 
     def setup(self):
         #Mapa
-        tmx_data = load_pygame('Dream_Codding/Mapa/basico.tmx')
+        tmx_data = load_pygame('Dream/Dream_Codding/Mapa/basico.tmx')
 
         #pegando as tiles da camada
         '''#No loop basta colocar o nome da camada(do tiled) por layer(uma ou mais de uma)

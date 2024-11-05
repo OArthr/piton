@@ -93,7 +93,7 @@ class Player(pygame.sprite.Sprite):
         self.animations = {'up_idle': [], 'down_idle': [], 'left_idle': [], 'right_idle': [], 'up': [], 'down': [], 'left': [], 'right': []}
 
         for animation in self.animations.keys():
-            full_path = 'Dream_Codding/grafico/movimento/'+animation
+            full_path = 'Dream/Dream_Codding/grafico/movimento/'+animation
             self.animations[animation] = import_folder(full_path)
 
     def animate(self, dt):

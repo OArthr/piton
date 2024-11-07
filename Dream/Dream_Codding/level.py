@@ -51,8 +51,8 @@ class Level:
             Objetos((obj.x , obj.y), obj.image , [self.all_sprites, self.colisions_sprites])
 
         #Colisões
-        # for x, y, surf in tmx_data.get_layer_by_name('Colisões').tiles():
-        #     Generic((x * TILE_SIZE,y * TILE_SIZE), pygame.Surface((TILE_SIZE, TILE_SIZE)) , self.colisions_sprites)
+        for x, y, surf in tmx_data.get_layer_by_name('Colisões').tiles():
+            Generic((x * TILE_SIZE,y * TILE_SIZE), pygame.Surface((TILE_SIZE, TILE_SIZE)) , self.colisions_sprites)
 
         #Inicio
         for obj in tmx_data.get_layer_by_name('Player'):

@@ -7,7 +7,7 @@ class Generic(pygame.sprite.Sprite):
         self.image = surf
         self.rect = self.image.get_rect(topleft=pos)
         self.z = z
-        self.hitbox = self.rect.copy().inflate((-self.rect.width * 0.2, -self.rect.height * 0.75))
+        self.hitbox = self.rect.copy().inflate((-self.rect.width * 0.1, -self.rect.height * 0.6))
 
 class Objetos(Generic):
     def __init__(self, pos, surf, groups):

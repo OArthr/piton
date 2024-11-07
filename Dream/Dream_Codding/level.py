@@ -92,8 +92,8 @@ class CameraGroup(pygame.sprite.Group):
             self.zoom_scale -= .01
 
     def custom_draw(self, player):
-        self.offset.x = player.rect.centerx - SCREEN_WIDTH / 2
-        self.offset.y = player.rect.centery - SCREEN_HEIGHT / 2
+        self.offset.x = player.rect.centerx - SCREEN_WIDTH // 2
+        self.offset.y = player.rect.centery - SCREEN_HEIGHT // 2
         
         self.zoom()
 

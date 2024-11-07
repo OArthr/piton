@@ -19,7 +19,7 @@ class Player(pygame.sprite.Sprite):
         #Movimento
         self.direction = pygame.math.Vector2()
         self.pos = pygame.math.Vector2(self.rect.center)
-        self.speed = 200
+        self.speed = 150
 
         #colisao
         self.hitbox = self.rect.copy().inflate((-19,-12))

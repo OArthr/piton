@@ -19,6 +19,7 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+
             
             dt = self.clock.tick() / 1000.0
             self.level.run(dt)

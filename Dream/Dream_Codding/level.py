@@ -15,6 +15,13 @@ class Level:
 
         self.setup()
 
+        #musica
+        self.music = pygame.mixer.Sound('Dream/Dream_Codding/Audio/this-isnx27t-the-radio-i-listen-before-248595.mp3')
+        self.music.play(loops = -1)
+        self.music.set_volume(0.1)
+
+            
+
     def setup(self):
         #Mapa
         tmx_data = load_pygame('Dream/Dream_Codding/Mapa/tilesets/DREAMCODE mapa.tmx')
@@ -85,11 +92,12 @@ class CameraGroup(pygame.sprite.Group):
 
     
     def zoom(self):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_q] and self.zoom_scale < 2:
-            self.zoom_scale += .01
-        if keys[pygame.K_e] and self.zoom_scale > .8:
-            self.zoom_scale -= .01
+        self.zoom_scale = 3
+        # keys = pygame.key.get_pressed()
+        # if keys[pygame.K_q] and self.zoom_scale < 2:
+        #     self.zoom_scale += .01
+        # if keys[pygame.K_e] and self.zoom_scale > .8:
+        #     self.zoom_scale -= .01
 
     def custom_draw(self, player):
         self.offset.x = player.rect.centerx - SCREEN_WIDTH // 2

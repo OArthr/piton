@@ -79,25 +79,25 @@ class Level:
         self.all_sprites.custom_draw(self.player)
         self.all_sprites.update(dt)
 
+
 class CameraGroup(pygame.sprite.Group):
     def __init__(self):
         super().__init__()
         self.display_surface = pygame.display.get_surface()
         self.offset = pygame.math.Vector2()
 
-        self.zoom_scale = 1
+        self.zoom_scale = 3
         self.inter_surf_size = pygame.display.get_surface().get_size()
         self.inter_surf = pygame.Surface(self.inter_surf_size, pygame.SRCALPHA)
         self.inter_surf_size_vect = pygame.math.Vector2(self.inter_surf_size)
 
     
     def zoom(self):
-        self.zoom_scale = 3
-        # keys = pygame.key.get_pressed()
-        # if keys[pygame.K_q] and self.zoom_scale < 2:
-        #     self.zoom_scale += .01
-        # if keys[pygame.K_e] and self.zoom_scale > .8:
-        #     self.zoom_scale -= .01
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_q] and self.zoom_scale < 3:
+            self.zoom_scale += .1
+        if keys[pygame.K_e] and self.zoom_scale > 1.5:
+            self.zoom_scale -= .1
 
     def custom_draw(self, player):
         self.offset.x = player.rect.centerx - SCREEN_WIDTH // 2

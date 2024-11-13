@@ -99,7 +99,7 @@ class Player(pygame.sprite.Sprite):
             self.animations[animation] = import_folder(full_path)
 
     def animate(self, dt):
-        self.frame_index +=6*dt
+        self.frame_index +=7*dt
         if self.frame_index >= len(self.animations[self.status]):
             self.frame_index = 0
         

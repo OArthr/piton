@@ -330,7 +330,7 @@
 </data>
  </layer>
  <objectgroup id="5" name="objetos">
-  <object id="9" gid="2147485738" x="1298" y="641.167" width="24.3333" height="40"/>
+  <object id="9" gid="2147485738" x="1314.5" y="634.417" width="24.3333" height="48.75"/>
   <object id="13" gid="2091" x="712.166" y="300.666" width="54.6667" height="73.3333"/>
   <object id="14" gid="2091" x="425.166" y="548.334" width="55.3333" height="72.6667"/>
   <object id="15" gid="2091" x="306.667" y="603" width="50.6667" height="67.3333"/>
@@ -435,10 +435,10 @@
   <object id="163" gid="2092" x="1022.16" y="671.666" width="59.6667" height="72"/>
   <object id="165" gid="2100" x="1007.46" y="447.611" width="33.7525" height="72.4444"/>
   <object id="166" gid="2100" x="1072.96" y="447.944" width="33.7525" height="72.4444"/>
-  <object id="167" gid="2109" x="1407.4" y="674.187" width="17.7643" height="18.4596"/>
+  <object id="167" gid="2109" x="1407.4" y="675.687" width="17.7643" height="19.7096"/>
   <object id="168" gid="2109" x="1408.53" y="689.437" width="17.0143" height="18.0846"/>
-  <object id="169" gid="2107" x="1343.2" y="687.352" width="17.6919" height="28.1158"/>
-  <object id="170" gid="2109" x="1391.46" y="672.033" width="16.8893" height="15.8346"/>
+  <object id="169" gid="2107" x="1342.2" y="686.102" width="20.4419" height="31.6158"/>
+  <object id="170" gid="2109" x="1391.96" y="675.533" width="16.8893" height="18.3346"/>
   <object id="171" gid="2112" x="1882" y="694.333" width="13" height="45"/>
   <object id="172" gid="2112" x="1946.67" y="690.333" width="13" height="45"/>
   <object id="173" gid="2112" x="1880.67" y="767" width="13" height="45"/>

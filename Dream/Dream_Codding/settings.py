@@ -25,6 +25,7 @@ LAYERS = {
 	'casa_chão': 2,
 	# 'ground plant': 6,
 	'main': 3,
+    'texts':4,
 	# 'house top': 8,
 	# 'fruit': 9,
 	# 'rain drops': 10

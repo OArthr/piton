@@ -7,11 +7,15 @@ from pytmx.util_pygame import load_pygame
 class Level:
 
     def __init__(self):
-        
+        # Carregar uma imagem
+        self.image = pygame.image.load('Dream/Dream_Codding/Mapa/tilesets/DREAMCODE mapa.png').convert_alpha()
         #Pega a superficie
+        # Mostrar a imagem na tela
+        
         self.display_surface = pygame.display.get_surface()    
         self.all_sprites = CameraGroup()
         self.colisions_sprites = pygame.sprite.Group()
+        
 
         self.setup()
 
@@ -33,13 +37,13 @@ class Level:
                 #Aqui basta modificar a posição em que vai ser renderizada a imagem      AQUI (estão no arquivo settings.py)
                 Generic((x * TILE_SIZE,y * TILE_SIZE), surf , self.all_sprites , LAYERS['layer'])'''
 
-        for layer in ['chão']:
-            for x, y, surf in tmx_data.get_layer_by_name(layer).tiles():
-                Generic((x * TILE_SIZE,y * TILE_SIZE), surf , self.all_sprites , LAYERS['ground'])
+            # for layer in ['chão']:
+            #     for x, y, surf in tmx_data.get_layer_by_name(layer).tiles():
+            #         Generic((x * TILE_SIZE,y * TILE_SIZE), surf , self.all_sprites , LAYERS['ground'])
 
-        for layer in ['mar']:
-            for x, y, surf in tmx_data.get_layer_by_name(layer).tiles():
-                Generic((x * TILE_SIZE,y * TILE_SIZE), surf , self.all_sprites , LAYERS['agua'])
+        # for layer in ['mar']:
+        #     for x, y, surf in tmx_data.get_layer_by_name(layer).tiles():
+        #         Generic((x * TILE_SIZE,y * TILE_SIZE), surf , self.all_sprites , LAYERS['agua'])
         
         # for layer in ['casa_chão']:
         #     for x, y, surf in tmx_data.get_layer_by_name(layer).tiles():
@@ -47,24 +51,33 @@ class Level:
         # for layer in ['Cerca']:
         #     for x, y, surf in tmx_data.get_layer_by_name(layer).tiles():
         #         Generic((x * TILE_SIZE,y * TILE_SIZE), surf , [self.all_sprites, self.colisions_sprites] , LAYERS['main'])
-        for layer in ['paredes']:
-            for x, y, surf in tmx_data.get_layer_by_name(layer).tiles():
-                Generic((x * TILE_SIZE,y * TILE_SIZE), surf , self.all_sprites , LAYERS['main'])
+        # for layer in ['paredes']:
+        #     for x, y, surf in tmx_data.get_layer_by_name(layer).tiles():
+        #         Generic((x * TILE_SIZE,y * TILE_SIZE), surf , self.all_sprites , LAYERS['main'])
         # for layer in ['porta']:
         #     for x, y, surf in tmx_data.get_layer_by_name(layer).tiles():
         #         Generic((x * TILE_SIZE,y * TILE_SIZE), surf , self.all_sprites , LAYERS['main'])
         #Obejtos
         for obj in tmx_data.get_layer_by_name('objetos'):
-            Objetos((obj.x , obj.y), obj.image , [self.all_sprites, self.colisions_sprites])
+            obj_image = pygame.transform.scale(obj.image, (int(obj.width), int(obj.height)))
+            Objetos((obj.x , obj.y), obj_image , [self.all_sprites, self.colisions_sprites], z=LAYERS['main'])
+        
+        for obj in tmx_data.get_layer_by_name('mar'):
+             Objetos((obj.x , obj.y), obj.image , self.all_sprites, z=LAYERS['agua'])
 
         #Colisões
         for x, y, surf in tmx_data.get_layer_by_name('Colisões').tiles():
             Generic((x * TILE_SIZE,y * TILE_SIZE), pygame.Surface((TILE_SIZE, TILE_SIZE)) , self.colisions_sprites)
 
         #Inicio
-        for obj in tmx_data.get_layer_by_name('Player'):
+        for obj in tmx_data.get_layer_by_name('Entidades'):
             if obj.name == 'Inicio':
                 self.player = Player((obj.x , obj.y), self.all_sprites, self.colisions_sprites)
+        
+        for obj in tmx_data.get_layer_by_name('Textos'):
+             Objetos((obj.x , obj.y), obj.image , self.all_sprites, z=LAYERS['texts'])
+            
+
 
 
 
@@ -74,10 +87,11 @@ class Level:
         #     groups = self.all_sprites,
         #     z = LAYERS['ground'])
 
-    def run(self, dt):
-        self.display_surface.fill('black')
+    def run(self, dt,ativo):
+        self.display_surface.fill('blue')
         self.all_sprites.custom_draw(self.player)
-        self.all_sprites.update(dt)
+        self.all_sprites.update(dt,ativo)
+        
 
 
 class CameraGroup(pygame.sprite.Group):
@@ -94,9 +108,9 @@ class CameraGroup(pygame.sprite.Group):
     
     def zoom(self):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_q] and self.zoom_scale < 3:
+        if keys[pygame.K_q] and self.zoom_scale < 5:
             self.zoom_scale += .1
-        if keys[pygame.K_e] and self.zoom_scale > 1.5:
+        if keys[pygame.K_e] and self.zoom_scale > 3:
             self.zoom_scale -= .1
 
     def custom_draw(self, player):
@@ -105,7 +119,7 @@ class CameraGroup(pygame.sprite.Group):
         
         self.zoom()
 
-        self.inter_surf.fill('black')
+        self.inter_surf.fill('#3a3f5e')
 
             
         for layer in LAYERS.values():
@@ -114,7 +128,7 @@ class CameraGroup(pygame.sprite.Group):
                     offset_rect = sprite.rect.copy()
                     offset_rect.center -= self.offset
                     self.inter_surf.blit(sprite.image, offset_rect)
-        
+                
         scaled_surf = pygame.transform.scale(self.inter_surf,self.inter_surf_size_vect * self.zoom_scale)
         scaled_rect = scaled_surf.get_rect(center = (self.display_surface.get_size()[0]//2,self.display_surface.get_size()[1]//2))
 

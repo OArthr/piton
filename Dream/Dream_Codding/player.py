@@ -19,11 +19,13 @@ class Player(pygame.sprite.Sprite):
         #Movimento
         self.direction = pygame.math.Vector2()
         self.pos = pygame.math.Vector2(self.rect.center)
-        self.speed = 150
+        self.speed = 80
 
         #colisao
         self.hitbox = self.rect.copy().inflate((-19,-12))
         self.colisions_sprites = colisions_sprites
+
+        
 
         #Teclas
     
@@ -97,7 +99,7 @@ class Player(pygame.sprite.Sprite):
             self.animations[animation] = import_folder(full_path)
 
     def animate(self, dt):
-        self.frame_index +=4*dt
+        self.frame_index +=6*dt
         if self.frame_index >= len(self.animations[self.status]):
             self.frame_index = 0
         
@@ -108,10 +110,10 @@ class Player(pygame.sprite.Sprite):
             self.status = self.status.split('_')[0] + '_idle'
 
     #atualizaçao
-    def update(self, dt):
+    def update(self, dt,ativo):
         self.input()
         self.get_status()
-        self.move(dt)
+        self.move(dt) if not ativo else None
         self.animate(dt)
             
 

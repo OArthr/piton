@@ -60,7 +60,7 @@ class Level:
         #Obejtos
         for obj in tmx_data.get_layer_by_name('objetos'):
             obj_image = pygame.transform.scale(obj.image, (int(obj.width), int(obj.height)))
-            Objetos((obj.x , obj.y), obj_image , [self.all_sprites, self.colisions_sprites], z=LAYERS['main'])
+            Objetos((obj.x , obj.y), obj_image , self.all_sprites, z=LAYERS['main'])
         
         for obj in tmx_data.get_layer_by_name('mar'):
              Objetos((obj.x , obj.y), obj.image , self.all_sprites, z=LAYERS['agua'])
@@ -68,6 +68,10 @@ class Level:
         #Colisões
         for x, y, surf in tmx_data.get_layer_by_name('Colisões').tiles():
             Generic((x * TILE_SIZE,y * TILE_SIZE), pygame.Surface((TILE_SIZE, TILE_SIZE)) , self.colisions_sprites)
+            
+        for obj in tmx_data.get_layer_by_name('obj colisão'):
+            obj_image = pygame.transform.scale(obj.image, (int(obj.width), int(obj.height)))
+            Objetos((obj.x , obj.y), obj_image ,self.colisions_sprites, z=LAYERS['main'])
 
         #Inicio
         for obj in tmx_data.get_layer_by_name('Entidades'):

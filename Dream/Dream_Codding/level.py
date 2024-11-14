@@ -59,7 +59,8 @@ class Level:
         #         Generic((x * TILE_SIZE,y * TILE_SIZE), surf , self.all_sprites , LAYERS['main'])
         #Obejtos
         for obj in tmx_data.get_layer_by_name('objetos'):
-            Objetos((obj.x , obj.y), obj.image , [self.all_sprites, self.colisions_sprites], z=LAYERS['main'])
+            obj_image = pygame.transform.scale(obj.image, (int(obj.width), int(obj.height)))
+            Objetos((obj.x , obj.y), obj_image , [self.all_sprites, self.colisions_sprites], z=LAYERS['main'])
         
         for obj in tmx_data.get_layer_by_name('mar'):
              Objetos((obj.x , obj.y), obj.image , self.all_sprites, z=LAYERS['agua'])

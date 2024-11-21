@@ -33,7 +33,10 @@ class Player(pygame.sprite.Sprite):
     def input(self):
     
         keys = pygame.key.get_pressed()
-
+        if keys[pygame.K_LSHIFT]:
+            self.speed = 160
+        else:
+            self.speed = 80
         if keys[pygame.K_w]:
             self.direction.y = -1
             self.status = 'up'

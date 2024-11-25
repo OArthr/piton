@@ -50,8 +50,8 @@ class Game:
         # Lista de linhas do tutorial
         tutorial_lines = [
             "Use W, A, S, D para mover e SHIFT para correr.",
-            "Pressione ENTER para interagir com objetos.",
-            "Evite obstáculos e colete itens para ganhar pontos.",
+            "Explore o mapa e encontre os NPCs com as perguntas",
+            "Caso não saiba a resposta, procure dicas pelo cenário",
             "Pressione qualquer tecla para continuar."
         ]
         

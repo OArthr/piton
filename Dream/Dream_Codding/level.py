@@ -21,9 +21,9 @@ class Level:
         self.setup()
 
         #musica
-        self.music = pygame.mixer.Sound('Dream/Dream_Codding/Audio/this-isnx27t-the-radio-i-listen-before-248595.mp3')
-        self.music.play(loops = -1)
-        self.music.set_volume(0.1)
+        # self.music = pygame.mixer.Sound('Dream/Dream_Codding/Audio/this-isnx27t-the-radio-i-listen-before-248595.mp3')
+        # self.music.play(loops = -1)
+        # self.music.set_volume(0.1)
 
             
 

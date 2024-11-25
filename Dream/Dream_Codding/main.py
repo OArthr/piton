@@ -1,32 +1,46 @@
-import pygame, sys
+import pygame
+import sys
+from button import Button
 from settings import *
 from level import Level
 
+pygame.init()
+
 class Game:
     def __init__(self):
-        pygame.init()
+        # Configurações de tela
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
-        pygame.display.set_caption('Dream')
+        pygame.display.set_caption("Dream")
         self.clock = pygame.time.Clock()
         self.level = Level()
 
         # Estados do jogo
-        self.state = "menu"  # Pode ser "menu", "tutorial" ou "jogo"
+        self.state = "menu"  # Pode ser "menu", "tutorial", ou "jogo"
 
-        # Fontes e textos pré-renderizados
-        self.title_font = pygame.font.SysFont('System', 64)
-        self.text_font = pygame.font.SysFont('System', 32)
-        self.title_surf = self.title_font.render("Dream", True, 'white')
-        self.start_surf = self.text_font.render("Pressione qualquer tecla para começar", True, 'white')
+        # Fonte e plano de fundo do menu
+        self.font_path = "Dream/Dream_Codding/assets/font.ttf"
+        self.background = pygame.image.load("Dream/Dream_Codding/bg1.png").convert()
+        self.background_scaled = pygame.transform.scale(self.background, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
-        # Dados de interação
+        # Músicas
+        self.menu_tutorial_music = "Dream/Dream_Codding/Audio/Anemoia - Chimeric.mp3"  # Música para menu e tutorial
+        self.game_music = "Dream/Dream_Codding/Audio/Bggm.mp3"  # Música para o jogo
+        self.current_music = None  # Controle da música atual
+        self.play_music(self.menu_tutorial_music)
+
+        # Caixa de texto para respostas
         self.text = ''
-        self.textbox = pygame.Rect(SCREEN_WIDTH // 2 - 100, 600, 200, 50)
-        self.corAtivo = pygame.Color('red')
-        self.corPassivo = pygame.Color('gray10')
+        self.textbox = pygame.Rect(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT - 100, 200, 50)
+        self.corAtivo = pygame.Color('green')  # Cor verde quando ativo
+        self.corPassivo = pygame.Color('gray10')  # Cor original
         self.cor = self.corPassivo
         self.ativo = False
         self.score = 0
+        self.score_max = 4  # Máxima pontuação
+        self.pontuacao_errada_time = 0  # Controle do tempo de cor vermelha (para piscar)
+        self.pontuacao_errada = False  # Flag para verificar se a pontuação está errada
+        self.pontuacao_acertada_time = 0  # Controle do tempo de cor verde (para piscar)
+        self.pontuacao_acertada = False  # Flag para verificar se a pontuação foi acertada
 
         # Respostas corretas
         self.respostas = {
@@ -36,92 +50,214 @@ class Game:
             4: 'O((N+M)LOGN)'
         }
 
-    def draw_menu(self):
-        self.screen.fill((30, 30, 30))
-        title_rect = self.title_surf.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50))
-        self.screen.blit(self.title_surf, title_rect)
+    def play_music(self, music_path):
+        """Troca a música de fundo se necessário."""
+        if self.current_music != music_path:
+            pygame.mixer.music.load(music_path)
+            pygame.mixer.music.play(-1)  # Loop infinito
+            self.current_music = music_path
 
-        start_rect = self.start_surf.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 50))
-        self.screen.blit(self.start_surf, start_rect)
+    def get_font(self, size):
+        """Carrega a fonte personalizada no tamanho especificado."""
+        return pygame.font.Font(self.font_path, size)
+
+    def scale_background(self):
+        """Redimensiona o plano de fundo para o tamanho atual da janela."""
+        self.background_scaled = pygame.transform.scale(self.background, (self.screen.get_width(), self.screen.get_height()))
+
+    def draw_textbox(self):
+        """Desenha a caixa de texto com bordas arredondadas e sombra."""
+        shadow_rect = self.textbox.inflate(10, 10)  # Efeito de sombra
+        pygame.draw.rect(self.screen, (0, 0, 0), shadow_rect, border_radius=15)  # Sombra preta
+        pygame.draw.rect(self.screen, self.cor, self.textbox, 3, border_radius=15)  # Caixa com borda arredondada
+
+        # Definir a cor da letra
+        text_color = (255, 255, 255)  # Cor branca para o texto
+
+        # Diminuir o tamanho da fonte para 12
+        text_surf = self.get_font(12).render(self.text, False, text_color)
+        self.screen.blit(text_surf, (self.textbox.x + 5, self.textbox.y + 5))  # Texto dentro da caixa
+
+    def draw_score(self):
+        """Exibe a pontuação com efeitos visuais dinâmicos."""
+        # Se a pontuação foi errada, pisca em vermelho
+        if self.pontuacao_errada:
+            # Calcula o tempo de piscar
+            if pygame.time.get_ticks() - self.pontuacao_errada_time < 500:
+                # Alterna a cor para vermelho
+                score_color = (255, 0, 0)  # Vermelho
+            else:
+                # Se o tempo de piscar passou, reseta a pontuação
+                score_color = (255, 255, 255)  # Branco
+                if pygame.time.get_ticks() - self.pontuacao_errada_time > 1000:  # 1 segundo para resetar
+                    self.pontuacao_errada = False
+                    self.score = 0  # Resetando a pontuação
+        elif self.pontuacao_acertada:
+            # Calcula o tempo de piscar em verde
+            if pygame.time.get_ticks() - self.pontuacao_acertada_time < 500:
+                # Alterna a cor para verde
+                score_color = (0, 255, 0)  # Verde
+            else:
+                score_color = (255, 255, 255)  # Branco
+                if pygame.time.get_ticks() - self.pontuacao_acertada_time > 1000:  # 1 segundo para parar o piscar
+                    self.pontuacao_acertada = False
+        else:
+            score_color = (255, 255, 255)  # Cor branca padrão
+
+        # Exibe a pontuação com a cor de fundo
+        score_text = self.get_font(12).render(f"Pontuação: {self.score}/{self.score_max}", True, score_color)
+
+        # Posicionar a pontuação no canto superior esquerdo
+        score_rect = score_text.get_rect(topleft=(10, 10))
+        self.screen.blit(score_text, score_rect)
+
+    def draw_menu(self):
+        """Exibe o menu principal com botões."""
+        self.play_music(self.menu_tutorial_music)  # Trocar para música do menu e tutorial
+        while self.state == "menu":
+            self.scale_background()
+            self.screen.blit(self.background_scaled, (0, 0))
+            menu_mouse_pos = pygame.mouse.get_pos()
+
+            # Texto do menu
+            menu_text = self.get_font(100).render("DREAMCODE", True, "#b68f40")
+            menu_rect = menu_text.get_rect(center=(self.screen.get_width() // 2, 100))
+            self.screen.blit(menu_text, menu_rect)
+
+            # Botões
+            play_button = Button(
+                image=pygame.image.load("Dream/Dream_Codding/assets/Play Rect.png"),
+                pos=(self.screen.get_width() // 2, 250),
+                text_input="PLAY",
+                font=self.get_font(55),
+                base_color="#d7fcd4",
+                hovering_color="White",
+            )
+            options_button = Button(
+                image=pygame.image.load("Dream/Dream_Codding/assets/Options Rect.png"),
+                pos=(self.screen.get_width() // 2, 400),
+                text_input="TUTORIAL",
+                font=self.get_font(55),
+                base_color="#d7fcd4",
+                hovering_color="White",
+            )
+            quit_button = Button(
+                image=pygame.image.load("Dream/Dream_Codding/assets/Quit Rect.png"),
+                pos=(self.screen.get_width() // 2, 550),
+                text_input="QUIT",
+                font=self.get_font(55),
+                base_color="#d7fcd4",
+                hovering_color="White",
+            )
+
+            # Atualizar cores e exibir botões
+            for button in [play_button, options_button, quit_button]:
+                button.changeColor(menu_mouse_pos)
+                button.update(self.screen)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if play_button.checkForInput(menu_mouse_pos):
+                        self.state = "jogo"
+                        return
+                    if options_button.checkForInput(menu_mouse_pos):
+                        self.state = "tutorial"
+                        return
+                    if quit_button.checkForInput(menu_mouse_pos):
+                        pygame.quit()
+                        sys.exit()
+
+            pygame.display.update()
 
     def draw_tutorial(self):
-        self.screen.fill((20, 20, 60))
-        
-        # Lista de linhas do tutorial
-        tutorial_lines = [
-            "Use W, A, S, D para mover e SHIFT para correr.",
-            "Explore o mapa e encontre os NPCs com as perguntas",
-            "Caso não saiba a resposta, procure dicas pelo cenário",
-            "Pressione qualquer tecla para continuar."
-        ]
-        
-        # Espaçamento entre linhas
-        line_spacing = 40
-        start_y = SCREEN_HEIGHT // 2 - (len(tutorial_lines) * line_spacing) // 2
+        """Exibe a tela de tutorial com texto informativo."""
+        self.play_music(self.menu_tutorial_music)  # Trocar para música do menu e tutorial
+        while self.state == "tutorial":
+            self.screen.fill((20, 20, 60))
+            tutorial_lines = [
+                "Use W, A, S, D para mover e SHIFT para correr.",
+                "Explore o mapa e encontre os NPCs com as perguntas.",
+                "Caso não saiba a resposta, procure dicas pelo cenário.",
+                "As respostas devem ser escritas na caixa de resposta na parte inferior.",
+                "No formato de uma lista (EX.: a,b,c,d).",
+                "Pressione qualquer tecla para continuar.",
+            ]
+            line_spacing = 40
+            start_y = self.screen.get_height() // 2 - (len(tutorial_lines) * line_spacing) // 2
 
-        # Renderizar cada linha e desenhá-la na tela
-        for i, line in enumerate(tutorial_lines):
-            line_surf = self.text_font.render(line, True, 'white')
-            line_rect = line_surf.get_rect(center=(SCREEN_WIDTH // 2, start_y + i * line_spacing))
-            self.screen.blit(line_surf, line_rect)
+            for i, line in enumerate(tutorial_lines):
+                line_surf = self.get_font(22).render(line, True, 'white')
+                line_rect = line_surf.get_rect(center=(self.screen.get_width() // 2, start_y + i * line_spacing))
+                self.screen.blit(line_surf, line_rect)
 
-    def handle_events(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    self.state = "menu"
+                    return
 
-            if event.type == pygame.KEYDOWN:
-                if self.state == "menu":
-                    self.state = "tutorial"
-                elif self.state == "tutorial":
-                    self.state = "jogo"
-
-            if self.state == "jogo":
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if self.textbox.collidepoint(event.pos):
-                        self.ativo = True
-                    else:
-                        self.ativo = False
-
-                if event.type == pygame.KEYDOWN and self.ativo:
-                    if event.key == pygame.K_BACKSPACE:
-                        self.text = self.text[:-1]
-                    elif event.key == pygame.K_RETURN:
-                        self.score = 0
-                        splitText = self.text.upper().split(',')
-                        while len(splitText) < 4:
-                            splitText.append('')
-                        for i in self.respostas.keys():
-                            if splitText[i - 1] == self.respostas[i]:
-                                self.score += 1
-                        print(self.score)
-                    else:
-                        self.text += event.unicode
+            pygame.display.update()
 
     def run_game_logic(self):
-        if self.ativo:
-            self.cor = self.corAtivo
-        else:
-            self.cor = self.corPassivo
+        """Executa a lógica principal do jogo."""
+        self.play_music(self.game_music)  # Trocar para música do jogo
+        while self.state == "jogo":
+            dt = self.clock.tick(60) / 1000.0
+            self.level.run(dt, ativo=False)
 
-        dt = self.clock.tick(60) / 1000.0  # Limitar FPS para 60
-        self.level.run(dt, self.ativo)
+            # Desenhar a caixa de texto com efeito
+            self.draw_textbox()
 
-        textSurf = self.text_font.render(self.text, False, (0, 0, 0))
-        scoreSurf = self.text_font.render(f"{self.score}/4", False, 'darkblue')
-        self.textbox.x = self.screen.get_width() // 2 - self.textbox.w // 2
-        self.textbox.y = self.screen.get_height() - 100
-        pygame.draw.rect(self.screen, self.cor, self.textbox, 3)
-        self.screen.blit(textSurf, (self.textbox.x + 5, self.textbox.y + 5))
-        self.screen.blit(scoreSurf, (100, 100))
+            # Exibir pontuação
+            self.draw_score()
 
-        self.textbox.w = max(200, textSurf.get_width() + 10)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.textbox.collidepoint(event.pos):
+                        self.ativo = True  # Ativar a caixa de texto
+                        self.cor = self.corAtivo  # Mudar para verde
+                    else:
+                        self.ativo = False  # Desativar a caixa de texto
+                        self.cor = self.corPassivo  # Voltar para a cor original
+                if event.type == pygame.KEYDOWN:
+                    if self.ativo:
+                        if event.key == pygame.K_BACKSPACE:
+                            self.text = self.text[:-1]  # Remover o último caractere
+                        elif event.key == pygame.K_RETURN:
+                            # Calcular pontuação com base nas respostas
+                            splitText = self.text.upper().split(',')
+                            while len(splitText) < 4:
+                                splitText.append('')
+                            correct_answers = 0
+                            for i in self.respostas.keys():
+                                if splitText[i - 1] == self.respostas[i]:
+                                    correct_answers += 1
+
+                            self.score = correct_answers  # Atualiza a pontuação baseada nas respostas corretas
+
+                            if self.score < 4:  # Se o jogador errar, a pontuação pisca em vermelho
+                                self.pontuacao_errada_time = pygame.time.get_ticks()
+                                self.pontuacao_errada = True
+                            else:  # Se acertar, a pontuação pisca em verde
+                                self.pontuacao_acertada_time = pygame.time.get_ticks()
+                                self.pontuacao_acertada = True
+                            print(self.score)
+                        else:
+                            self.text += event.unicode  # Adicionar caracteres à caixa de texto
+
+            pygame.display.update()
 
     def run(self):
+        """Gerencia os diferentes estados do jogo."""
         while True:
-            self.handle_events()
-
             if self.state == "menu":
                 self.draw_menu()
             elif self.state == "tutorial":
@@ -129,9 +265,8 @@ class Game:
             elif self.state == "jogo":
                 self.run_game_logic()
 
-            pygame.display.flip()  # Usar flip para melhorar desempenho
 
-# Verifica se está no main
+# Executar o jogo
 if __name__ == '__main__':
     game = Game()
     game.run()

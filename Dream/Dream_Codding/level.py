@@ -7,6 +7,7 @@ from pytmx.util_pygame import load_pygame
 class Level:
 
     def __init__(self):
+        
         # Carregar uma imagem
         self.image = pygame.image.load('Dream/Dream_Codding/Mapa/tilesets/DREAMCODE mapa.png').convert_alpha()
         #Pega a superficie

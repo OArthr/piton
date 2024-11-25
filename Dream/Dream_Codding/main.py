@@ -37,10 +37,8 @@ class Game:
         self.ativo = False
         self.score = 0
         self.score_max = 4  # Máxima pontuação
-        self.pontuacao_errada_time = 0  # Controle do tempo de cor vermelha (para piscar)
-        self.pontuacao_errada = False  # Flag para verificar se a pontuação está errada
-        self.pontuacao_acertada_time = 0  # Controle do tempo de cor verde (para piscar)
-        self.pontuacao_acertada = False  # Flag para verificar se a pontuação foi acertada
+        self.pontuacao_acertada = False  # Flag para piscar em verde ao acertar
+        self.pontuacao_acertada_time = 0  # Temporizador para o efeito de piscar
 
         # Respostas corretas
         self.respostas = {
@@ -79,35 +77,19 @@ class Game:
         self.screen.blit(text_surf, (self.textbox.x + 5, self.textbox.y + 5))  # Texto dentro da caixa
 
     def draw_score(self):
-        """Exibe a pontuação com efeitos visuais dinâmicos."""
-        # Se a pontuação foi errada, pisca em vermelho
-        if self.pontuacao_errada:
-            # Calcula o tempo de piscar
-            if pygame.time.get_ticks() - self.pontuacao_errada_time < 500:
-                # Alterna a cor para vermelho
-                score_color = (255, 0, 0)  # Vermelho
-            else:
-                # Se o tempo de piscar passou, reseta a pontuação
-                score_color = (255, 255, 255)  # Branco
-                if pygame.time.get_ticks() - self.pontuacao_errada_time > 1000:  # 1 segundo para resetar
-                    self.pontuacao_errada = False
-                    self.score = 0  # Resetando a pontuação
-        elif self.pontuacao_acertada:
-            # Calcula o tempo de piscar em verde
-            if pygame.time.get_ticks() - self.pontuacao_acertada_time < 500:
-                # Alterna a cor para verde
+        """Exibe a pontuação com efeito de piscar em verde ao acertar."""
+        # Determinar a cor da pontuação
+        if self.pontuacao_acertada:
+            if pygame.time.get_ticks() - self.pontuacao_acertada_time < 500:  # Piscar por 500ms
                 score_color = (0, 255, 0)  # Verde
             else:
-                score_color = (255, 255, 255)  # Branco
-                if pygame.time.get_ticks() - self.pontuacao_acertada_time > 1000:  # 1 segundo para parar o piscar
-                    self.pontuacao_acertada = False
+                self.pontuacao_acertada = False  # Terminar o efeito de piscar
+                score_color = (255, 255, 255)  # Branco padrão
         else:
-            score_color = (255, 255, 255)  # Cor branca padrão
+            score_color = (255, 255, 255)  # Branco padrão
 
-        # Exibe a pontuação com a cor de fundo
-        score_text = self.get_font(12).render(f"Pontuação: {self.score}/{self.score_max}", True, score_color)
-
-        # Posicionar a pontuação no canto superior esquerdo
+        # Renderizar a pontuação
+        score_text = self.get_font(20).render(f"Pontuação: {self.score}/{self.score_max}", True, score_color)
         score_rect = score_text.get_rect(topleft=(10, 10))
         self.screen.blit(score_text, score_rect)
 
@@ -176,20 +158,28 @@ class Game:
         """Exibe a tela de tutorial com texto informativo."""
         self.play_music(self.menu_tutorial_music)  # Trocar para música do menu e tutorial
         while self.state == "tutorial":
-            self.screen.fill((20, 20, 60))
+            self.screen.fill("black")
             tutorial_lines = [
+                "Bem-vindo ao dream_Code!",
+                "Um jogo educativo de programação e algoritimos.",
                 "Use W, A, S, D para mover e SHIFT para correr.",
                 "Explore o mapa e encontre os NPCs com as perguntas.",
                 "Caso não saiba a resposta, procure dicas pelo cenário.",
-                "As respostas devem ser escritas na caixa de resposta na parte inferior.",
+                "As respostas devem ser escritas na caixa de resposta ",
+                "na parte inferior da tela.",
                 "No formato de uma lista (EX.: a,b,c,d).",
-                "Pressione qualquer tecla para continuar.",
+                "As respostas de cada pergunta ",
+                "devem ser separadas por uma virgula",
+                "e na ordem das questões.",
+                "Cada resposta correta aumenta sua pontuação,",
+                "mas uma resposta errada zera a pontuação.",
+                "Pressione qualquer tecla para voltar ao menu.",
             ]
             line_spacing = 40
             start_y = self.screen.get_height() // 2 - (len(tutorial_lines) * line_spacing) // 2
 
             for i, line in enumerate(tutorial_lines):
-                line_surf = self.get_font(22).render(line, True, 'white')
+                line_surf = self.get_font(22).render(line, True, 'darkgreen')
                 line_rect = line_surf.get_rect(center=(self.screen.get_width() // 2, start_y + i * line_spacing))
                 self.screen.blit(line_surf, line_rect)
 
@@ -243,12 +233,11 @@ class Game:
 
                             self.score = correct_answers  # Atualiza a pontuação baseada nas respostas corretas
 
-                            if self.score < 4:  # Se o jogador errar, a pontuação pisca em vermelho
-                                self.pontuacao_errada_time = pygame.time.get_ticks()
-                                self.pontuacao_errada = True
-                            else:  # Se acertar, a pontuação pisca em verde
-                                self.pontuacao_acertada_time = pygame.time.get_ticks()
+                            # Ativar efeito de piscar em verde ao acertar
+                            if self.score > 0:
                                 self.pontuacao_acertada = True
+                                self.pontuacao_acertada_time = pygame.time.get_ticks()
+
                             print(self.score)
                         else:
                             self.text += event.unicode  # Adicionar caracteres à caixa de texto

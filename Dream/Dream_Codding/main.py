@@ -30,7 +30,10 @@ class Game:
 
         # Caixa de texto para respostas
         self.text = ''
-        self.textbox = pygame.Rect(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT - 100, 200, 50)
+        self.textbox_height = 50  # Altura fixa da caixa de texto
+        self.textbox_width = 200  # Largura inicial
+        self.max_textbox_width = 400  # Largura máxima da caixa de texto
+        self.textbox = pygame.Rect(SCREEN_WIDTH // 2 - self.textbox_width // 2, SCREEN_HEIGHT - 100, self.textbox_width, self.textbox_height)
         self.corAtivo = pygame.Color('green')  # Cor verde quando ativo
         self.corPassivo = pygame.Color('gray10')  # Cor original
         self.cor = self.corPassivo
@@ -64,13 +67,18 @@ class Game:
         self.background_scaled = pygame.transform.scale(self.background, (self.screen.get_width(), self.screen.get_height()))
 
     def draw_textbox(self):
-        """Desenha a caixa de texto com bordas arredondadas e sombra."""
+        """Desenha a caixa de texto com bordas arredondadas e sombra. A caixa de texto se adapta ao tamanho do texto digitado."""
+        
+        # Atualizar o tamanho da caixa de texto com base no comprimento do texto digitado
+        text_length = len(self.text)
+        self.textbox.width = min(self.max_textbox_width, max(200, 12 * text_length))  # Ajuste de largura (12 pixels por caractere, com limites)
+
         shadow_rect = self.textbox.inflate(10, 10)  # Efeito de sombra
         pygame.draw.rect(self.screen, (0, 0, 0), shadow_rect, border_radius=15)  # Sombra preta
         pygame.draw.rect(self.screen, self.cor, self.textbox, 3, border_radius=15)  # Caixa com borda arredondada
 
         # Definir a cor da letra
-        text_color = (255, 255, 255)  # Cor branca para o texto
+        text_color = ("darkgreen")  # Cor para o texto
 
         # Diminuir o tamanho da fonte para 12
         text_surf = self.get_font(12).render(self.text, False, text_color)

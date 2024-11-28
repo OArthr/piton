@@ -180,7 +180,7 @@ class Game:
                 "devem ser separadas por uma virgula",
                 "e na ordem das questões.",
                 "Cada resposta correta aumenta sua pontuação,",
-                "mas uma resposta errada zera a pontuação.",
+                "mas uma resposta errada não terá aumento na pontuação.",
                 "Pressione qualquer tecla para voltar ao menu.",
             ]
             line_spacing = 40

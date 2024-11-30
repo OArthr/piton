@@ -11,6 +11,7 @@ LAYERS = {
 	'ground': 1,
 	'casa_chão': 2,
 	'main': 3,
+    'texts':4,
 
 }
 
